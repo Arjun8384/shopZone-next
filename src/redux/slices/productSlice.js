@@ -58,66 +58,63 @@ const productSlice = createSlice({
               ? action.payload
               : []
 
-          state.items =
-            products
+          const cleanedProducts =
+            products.map(
+              (product) => {
+                let categoryName =
+                  product?.category
+                    ?.name || ''
 
-          const categories =
-            [
-              ...new Map(
-                products
-                  .filter(
-                    (
-                      product
-                    ) =>
-                      product
-                        ?.category
-                        ?.id &&
-                      product
-                        ?.category
-                        ?.name
-                  )
-                  .map(
-                    (
-                      product
-                    ) => [
-                      product
-                        .category.id,
-                      product
-                        .category,
-                    ]
-                  )
-              ).values(),
-            ]
+                const lowerName =
+                  categoryName.toLowerCase()
 
-          state.categories =
-            categories.filter(
-              (
-                category
-              ) => {
-                const name =
-                  String(
-                    category.name
-                  )
-                    .trim()
-                    .toLowerCase()
-
-                return (
-                  name &&
-                  !name.includes(
+                if (
+                  lowerName.includes(
                     'updated'
-                  ) &&
-                  !name.includes(
+                  ) ||
+                  lowerName.includes(
                     'aaaa'
-                  ) &&
-                  !name.includes(
+                  ) ||
+                  lowerName.includes(
                     'test'
-                  ) &&
-                  !name.includes(
+                  ) ||
+                  lowerName.includes(
                     'string'
                   )
-                )
+                ) {
+                  categoryName =
+                    'Clothes'
+                }
+
+                return {
+                  ...product,
+                  category: {
+                    ...product.category,
+                    name: categoryName,
+                  },
+                }
               }
             )
+
+          state.items =
+            cleanedProducts
+
+          state.categories =
+            [
+              ...new Map(
+                cleanedProducts.map(
+                  (
+                    product
+                  ) => [
+                    product
+                      ?.category
+                      ?.id,
+                    product
+                      ?.category,
+                  ]
+                )
+              ).values(),
+            ]
         }
       )
 
